@@ -1,5 +1,6 @@
 #!/usr/bin/perl
-
+# nagios: -epn
+#
 #############################################################################
 #                                                                           #
 # This script was initially developed by Lonely Planet for internal use     #
@@ -26,6 +27,7 @@ use LWP::UserAgent;
 use Getopt::Std;
 use XML::XPath;
 use Data::Dumper;
+use HTTP::Cache::Transparent;
 
 my %optarg;
 my $getopt_result;
@@ -292,6 +294,10 @@ if ( $port == 80 || $port == 443 || $port eq "" ) {
 } else {
 	$lwp_user_agent->default_header('Host' => "$host:$port");
 }
+
+HTTP::Cache::Transparent::init( {
+      BasePath => '/tmp/cache',
+    } );
 
 $url = "$http://${host_ip}:${port}$uri";
 $http_request = HTTP::Request->new(GET => $url);
