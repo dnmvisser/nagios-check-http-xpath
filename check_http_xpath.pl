@@ -296,7 +296,7 @@ if ( $port == 80 || $port == 443 || $port eq "" ) {
 }
 
 HTTP::Cache::Transparent::init( {
-      BasePath => '/tmp/cache',
+      BasePath => '/var/cache/nagios3/xpath',
     } );
 
 $url = "$http://${host_ip}:${port}$uri";
