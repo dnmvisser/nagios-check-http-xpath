@@ -65,6 +65,7 @@ my $password = 'nagios';	# default password
 #my $uri = '/manager/status?XML=true';			#tomcat status URI
 my $uri = '/';
 my $http = 'http';
+my $cache_dir = '/var/cache/nagios3/xpath';
 my $regex_opts ="";
 # Example xpaths
 # /status/jvm/memory/@free 
@@ -83,7 +84,7 @@ my %invert_op = (
 	'!~'   => '=~',
 );
 
-$getopt_result = getopts('hvSsiH:I:p:w:c:t:l:a:u:', \%optarg) ;
+$getopt_result = getopts('hvSsiH:I:p:w:c:t:l:a:b:u:', \%optarg) ;
 
 # Any invalid options?
 if ( $getopt_result == 0 ) {
@@ -112,6 +113,7 @@ Usage:
 	-t  ... Seconds before connection times out. (default: $timeout)
 	-l  ... user for authentication (default: $user)
 	-a  ... password for authentication (default: embedded in script)
+	-b  ... Directory to use for caching the XML file (default: /var/cache/nagios3/xpath)
 	-u  ... uri path, (default: $uri)
 	-w  ... warn on failure, space separated list of xpaths and optional values,
 	        accepts operators ==  != > < <= >= =~ !~
@@ -200,6 +202,10 @@ if ( defined($optarg{l}) ) {
 
 if ( defined($optarg{a}) ) {
 	$password = $optarg{a};
+}
+
+if ( defined($optarg{b}) ) {
+	$cache_dir = $optarg{b};
 }
 
 if ( defined($optarg{u}) ) {
@@ -296,7 +302,7 @@ if ( $port == 80 || $port == 443 || $port eq "" ) {
 }
 
 HTTP::Cache::Transparent::init( {
-      BasePath => '/var/cache/nagios3/xpath',
+      BasePath => $cache_dir,
     } );
 
 $url = "$http://${host_ip}:${port}$uri";
